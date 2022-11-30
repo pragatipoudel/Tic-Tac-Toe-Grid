@@ -18,6 +18,14 @@ const lineLength = canvas.width - linePadding*2;
 
 let circle = true;
 
+const states = [];
+for (let c = 0; c < 3; c++) {
+    states[c] = [];
+    for (let r = 0; r < 3; r++) {
+        states[c][r] = 0;
+    }
+}
+
 
 
 function drawLine() {
@@ -50,11 +58,17 @@ function positionDet(x, y) {
         for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
             if ((x > j * lineSpacing) && (x < (j+1) * lineSpacing) && (y > i * lineSpacing) && (y < (i+1) * lineSpacing)) {
-                if (circle) {
-                    drawCircle(i, j);
-                } else {
-                    drawCross(i, j);
+                if (states[j][i] == 0) {
+                    if (circle) {
+                        states[j][i] = 1;
+                        drawCircle(i, j);
+                    } else {
+                        states[j][i] = 2;
+                        drawCross(i, j);
+                    }
                 }
+
+                checkWin();
             }
         }
     }
@@ -83,4 +97,52 @@ function drawCross(i, j) {
     circle = true;
 }
 
+function checkWin() {
+    let winner = 0;
+    for (let i = 0; i < 3; i++) {
+        if (states[0][i] == states[1][i] && states[1][i] == states[2][i]) {
+            winner = states[0][i];
+        } 
+    }
+
+    for (let j = 0; j < 3; j++) {
+        if (states[j][0] == states[j][1] && states [j][1] == states[j][2]) {
+            winner = states[j][0];
+        }
+    }
+
+    if (states[0][0] == states[1][1] && states[1][1] == states[2][2]) {
+        winner = states[0][0];
+    }
+
+    if (states[0][2] == states[1][1] && states[1][1] == states[2][0]) {
+        winner = states[0][2];
+    }
+
+    if (winner == 1) {
+        alert ("circle Won");
+        clear();
+    } else if (winner == 2) {
+        alert ("Cross Won");
+        clear();
+    } else {
+        let draw = 1;
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (states[i][j] == 0) {
+                    draw = 0;
+                } 
+            }
+        }
+        if (draw == 1) {
+            alert("It's a draw!");
+            clear();
+        }
+    }
+
+}
+
+function clear() {
+    document.location.reload();
+}
 drawLine();
